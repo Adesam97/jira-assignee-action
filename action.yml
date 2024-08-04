@@ -1,0 +1,39 @@
+name: 'Jira Assign Action'
+description: 'Assign a Jira ticket to a team member'
+inputs:
+  jira-base-url:
+    description: 'Jira base URL'
+    required: true
+  jira-user-email:
+    description: 'Jira user email'
+    required: true
+  jira-api-token:
+    description: 'Jira API token'
+    required: true
+  jira-ticket:
+    description: 'Jira ticket key'
+    required: true
+  jira-assignee:
+    description: 'Jira assignee username'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - run: |
+        RESPONSE=$(curl -w "\n%{http_code}" -X PUT \
+          -H "Authorization: Basic $(echo -n ${{ inputs.jira-user-email }}:${{ inputs.jira-api-token }} | base64)" \
+          -H "Content-Type: application/json" \
+          ${{ inputs.jira-base-url }}/rest/api/2/issue/${{ inputs.jira-ticket }}/assignee \
+          -d "{\"name\":\"${{ inputs.jira-assignee }}\"}")
+        
+        HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
+        BODY=$(echo "$RESPONSE" | sed '$d')
+        
+        if [ $HTTP_STATUS -ge 200 ] && [ $HTTP_STATUS -lt 300 ]; then
+          echo "Successfully assigned ticket ${{ inputs.jira-ticket }} to ${{ inputs.jira-assignee }}"
+        else
+          echo "Failed to assign ticket. Status code: $HTTP_STATUS"
+          echo "Response body: $BODY"
+          exit 1
+        fi
+      shell: bash
