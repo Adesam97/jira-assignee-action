@@ -13,10 +13,11 @@ This action assigns a Jira ticket to a specified user.
 ## Example usage
 
 ```yaml
-uses: your-github-username/jira-assign-action@v1
-with:
-  jira-base-url: ${{ secrets.JIRA_BASE_URL }}
-  jira-user-email: ${{ secrets.JIRA_USER_EMAIL }}
-  jira-api-token: ${{ secrets.JIRA_API_TOKEN }}
-  jira-ticket: PROJ-123
-  jira-assignee: johndoe
+- name: Assign Jira ticket using composite action
+  uses: Adesam97/jira-assignee-action@v2
+  with:
+    jira_base_url: ${{ secrets.JIRA_BASE_URL }}
+    jira_user_email: ${{ secrets.JIRA_USER_EMAIL }}
+    jira_api_token: ${{ secrets.JIRA_API_TOKEN }}
+    jira_assignee: ${{ secrets.JIRA_ASSIGNEE }}
+    jira_issue_key: 'RAV-44' # you can use a dynamic approach if you like
