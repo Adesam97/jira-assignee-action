@@ -1,19 +1,19 @@
 name: 'Jira Assign Action'
 description: 'Assign a Jira ticket to a team member'
 inputs:
-  jira-base-url:
+  jira_base_url:
     description: 'Jira base URL' #JIRA_BASE_URL
     required: true
-  jira-user-email:
+  jira_user_email:
     description: 'Jira user email' # JIRA_USER_EMAIL
     required: true
-  jira-api-token:
+  jira_api_token:
     description: 'Jira API token' # JIRA_API_TOKEN
     required: true
-  jira-ticket:
+  jira_ticket:
     description: 'Jira ticket key' #JIRA_ISSUE_KEY
     required: true
-  jira-assignee:
+  jira_assignee:
     description: 'Jira assignee username'  # JIRA_ASSIGNEE
     required: true
 runs:
@@ -40,9 +40,9 @@ runs:
           jira_base_url = os.getenv('JIRA_BASE_URL')
           jira_user_email = os.getenv('JIRA_USER_EMAIL')
           jira_api_token = os.getenv('JIRA_API_TOKEN')
-          jira_username = os.getenv('JIRA_ASSIGNEE')
+          jira_assignee = os.getenv('JIRA_ASSIGNEE')
 
-          url = f'{jira_base_url}/rest/api/3/user/search?query={jira_username}'
+          url = f'{jira_base_url}/rest/api/3/user/search?query={jira_assignee}'
           auth = (jira_user_email, jira_api_token)
           headers = {
             'Accept': 'application/json',
