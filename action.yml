@@ -14,7 +14,7 @@ inputs:
     description: 'Jira ticket key' #JIRA_ISSUE_KEY
     required: true
   jira_assignee:
-    description: 'Jira assignee username'  # JIRA_ASSIGNEE h
+    description: 'Jira assignee username'  # JIRA_ASSIGNEE 
     required: true
 runs:
   using: 'composite'
