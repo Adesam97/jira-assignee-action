@@ -2,19 +2,19 @@ name: 'Jira Assign Action'
 description: 'Assign a Jira ticket to a team member'
 inputs:
   jira_base_url:
-    description: 'Jira base URL' #JIRA_BASE_URL
+    description: 'Jira base URL'
     required: true
   jira_user_email:
-    description: 'Jira user email' # JIRA_USER_EMAIL
+    description: 'Jira user email'
     required: true
   jira_api_token:
-    description: 'Jira API token' # JIRA_API_TOKEN
+    description: 'Jira API token'
     required: true
   jira_ticket:
-    description: 'Jira ticket key' #JIRA_ISSUE_KEY
+    description: 'Jira ticket key'
     required: true
   jira_assignee:
-    description: 'Jira assignee username'  # JIRA_ASSIGNEE 
+    description: 'Jira assignee username'
     required: true
 runs:
   using: 'composite'
@@ -25,72 +25,17 @@ runs:
         python-version: '3.x'
 
     - name: Install requests library
+      shell: bash
       run: |
         python -m pip install --upgrade pip
         pip install requests
-        
-    - name: Get Jira Account ID
-      id: get-account-id
-      run: |
-        python -c "
-          import os
-          import requests
-          import json
 
-          jira_base_url = os.getenv('JIRA_BASE_URL')
-          jira_user_email = os.getenv('JIRA_USER_EMAIL')
-          jira_api_token = os.getenv('JIRA_API_TOKEN')
-          jira_assignee = os.getenv('JIRA_ASSIGNEE')
-
-          url = f'{jira_base_url}/rest/api/3/user/search?query={jira_assignee}'
-          auth = (jira_user_email, jira_api_token)
-          headers = {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          }
-
-          response = requests.get(url, headers=headers, auth=auth)
-
-          if response.status_code == 200:
-            users = response.json()
-            if users:
-                account_id = users[0]['accountId']
-                print(f'::set-output name=account_id::{account_id}')
-            else:
-                print('No users found.')
-                exit(1)
-          else:
-            print(f'Failed to retrieve users: {response.status_code} - {response.text}')
-            exit(1)
-          "
     - name: Assign Jira ticket
+      shell: bash
       env:
-          JIRA_ACCOUNT_ID: ${{ steps.get-account-id.outputs.account_id }}
-      run: |
-          python -c "
-          import os
-          import requests
-          import json
-          
-          jira_base_url = os.getenv('JIRA_BASE_URL')
-          jira_user_email = os.getenv('JIRA_USER_EMAIL')
-          jira_api_token = os.getenv('JIRA_API_TOKEN')
-          jira_account_id = os.getenv('JIRA_ACCOUNT_ID')
-          jira_issue_key = os.getenv('JIRA_ISSUE_KEY')
-          
-          url = f'{jira_base_url}/rest/api/3/issue/{jira_issue_key}/assignee'
-          auth = (jira_user_email, jira_api_token)
-          headers = {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-          }
-          data = json.dumps({'accountId': jira_account_id})
-          
-          response = requests.put(url, headers=headers, auth=auth, data=data)
-          
-          if response.status_code == 204:
-              print('Issue successfully assigned.')
-          else:
-              print(f'Failed to assign issue: {response.status_code} - {response.text}')
-          "
-      
+        JIRA_BASE_URL: ${{ inputs.jira_base_url }}
+        JIRA_USER_EMAIL: ${{ inputs.jira_user_email }}
+        JIRA_API_TOKEN: ${{ inputs.jira_api_token }}
+        JIRA_TICKET: ${{ inputs.jira_ticket }}
+        JIRA_ASSIGNEE: ${{ inputs.jira_assignee }}
+      run: python ${{ github.action_path }}/assign_ticket.py
