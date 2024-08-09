@@ -1,4 +1,5 @@
 name: 'Jira Assign Action'
+author: "Fikunmi Samson"
 description: 'Assign a Jira ticket to a team member'
 inputs:
   jira_base_url:
@@ -39,3 +40,6 @@ runs:
         JIRA_TICKET: ${{ inputs.jira_ticket }}
         JIRA_ASSIGNEE: ${{ inputs.jira_assignee }}
       run: python ${{ github.action_path }}/assign_ticket.py
+branding:
+  icon: "activity"
+  color: "blue"
