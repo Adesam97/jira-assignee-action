@@ -1,6 +1,6 @@
 name: 'Jira Assign Action'
 author: "Fikunmi Samson"
-description: 'Assign a Jira ticket to a team member'
+description: 'Assign a team member to a Jira issue ticket'
 inputs:
   jira_base_url:
     description: 'Jira base URL'
